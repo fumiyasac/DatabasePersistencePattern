@@ -16,6 +16,9 @@
 		DE5098D91C2A596100BB94A1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE5098D71C2A596100BB94A1 /* LaunchScreen.storyboard */; };
 		DE5098E41C2A596200BB94A1 /* DatabasePersistencePatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5098E31C2A596200BB94A1 /* DatabasePersistencePatternTests.swift */; };
 		DE5098EF1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5098EE1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift */; };
+		DED0558D1C38FC9D00CF451D /* AddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0558C1C38FC9D00CF451D /* AddController.swift */; };
+		DED0558F1C38FDD700CF451D /* DetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0558E1C38FDD700CF451D /* DetailController.swift */; };
+		DED055931C39110C00CF451D /* CommentAddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED055921C39110C00CF451D /* CommentAddController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +55,9 @@
 		DE5098EA1C2A596200BB94A1 /* DatabasePersistencePatternUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabasePersistencePatternUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE5098EE1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabasePersistencePatternUITests.swift; sourceTree = "<group>"; };
 		DE5098F01C2A596200BB94A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DED0558C1C38FC9D00CF451D /* AddController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddController.swift; sourceTree = "<group>"; };
+		DED0558E1C38FDD700CF451D /* DetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailController.swift; sourceTree = "<group>"; };
+		DED055921C39110C00CF451D /* CommentAddController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentAddController.swift; sourceTree = "<group>"; };
 		F754CCD7399F3CA93CAC1A88 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -123,13 +129,17 @@
 		DE5098CA1C2A596100BB94A1 /* DatabasePersistencePattern */ = {
 			isa = PBXGroup;
 			children = (
+				DED0558B1C38FC5200CF451D /* Realm */,
+				DED0558A1C38F7E200CF451D /* CoreData */,
 				DE5098CB1C2A596100BB94A1 /* AppDelegate.swift */,
 				DE5098CD1C2A596100BB94A1 /* ViewController.swift */,
+				DED0558C1C38FC9D00CF451D /* AddController.swift */,
+				DED0558E1C38FDD700CF451D /* DetailController.swift */,
+				DED055921C39110C00CF451D /* CommentAddController.swift */,
 				DE5098CF1C2A596100BB94A1 /* Main.storyboard */,
 				DE5098D51C2A596100BB94A1 /* Assets.xcassets */,
 				DE5098D71C2A596100BB94A1 /* LaunchScreen.storyboard */,
 				DE5098DA1C2A596100BB94A1 /* Info.plist */,
-				DE5098D21C2A596100BB94A1 /* DatabasePersistencePattern.xcdatamodeld */,
 			);
 			path = DatabasePersistencePattern;
 			sourceTree = "<group>";
@@ -150,6 +160,21 @@
 				DE5098F01C2A596200BB94A1 /* Info.plist */,
 			);
 			path = DatabasePersistencePatternUITests;
+			sourceTree = "<group>";
+		};
+		DED0558A1C38F7E200CF451D /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				DE5098D21C2A596100BB94A1 /* DatabasePersistencePattern.xcdatamodeld */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		DED0558B1C38FC5200CF451D /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Realm;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -334,9 +359,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DED055931C39110C00CF451D /* CommentAddController.swift in Sources */,
 				DE5098CE1C2A596100BB94A1 /* ViewController.swift in Sources */,
 				DE5098CC1C2A596100BB94A1 /* AppDelegate.swift in Sources */,
 				DE5098D41C2A596100BB94A1 /* DatabasePersistencePattern.xcdatamodeld in Sources */,
+				DED0558F1C38FDD700CF451D /* DetailController.swift in Sources */,
+				DED0558D1C38FC9D00CF451D /* AddController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
