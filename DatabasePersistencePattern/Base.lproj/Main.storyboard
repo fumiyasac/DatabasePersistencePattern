@@ -34,6 +34,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S5C-gi-hvO">
+                                <rect key="frame" x="0.0" y="108" width="600" height="52"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="52" id="WhF-qF-Jwc"/>
+                                </constraints>
+                            </view>
                             <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="4rE-Sr-C9Y">
                                 <rect key="frame" x="0.0" y="64" width="600" height="44"/>
                                 <constraints>
@@ -51,6 +58,9 @@
                                     <segment title="CoreData"/>
                                 </segments>
                                 <color key="tintColor" red="1" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <connections>
+                                    <action selector="segmentChangeAction:" destination="zhA-tI-e5N" eventType="valueChanged" id="QOK-8h-wK9"/>
+                                </connections>
                             </segmentedControl>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zuU-Li-KKf">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
@@ -58,17 +68,30 @@
                                     <constraint firstAttribute="height" constant="44" id="hoJ-4l-XDB"/>
                                 </constraints>
                                 <items>
-                                    <barButtonItem title="コメント順" id="i3v-ma-68K"/>
-                                    <barButtonItem width="24" style="plain" systemItem="fixedSpace" id="pMp-3T-T6G"/>
-                                    <barButtonItem title="日付順" id="tSS-jy-ANl"/>
+                                    <barButtonItem title="⇅コメント" id="i3v-ma-68K">
+                                        <connections>
+                                            <action selector="memoDataCommentSort:" destination="zhA-tI-e5N" id="eXT-kF-NXN"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="8" style="plain" systemItem="fixedSpace" id="pMp-3T-T6G"/>
+                                    <barButtonItem title="⇅日付" id="tSS-jy-ANl">
+                                        <connections>
+                                            <action selector="memoDataDateSort:" destination="zhA-tI-e5N" id="LNP-c2-doB"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="cM1-HU-eja"/>
-                                    <barButtonItem title="データ追加" id="h3L-vw-4Ie"/>
+                                    <barButtonItem title="＋追加" id="h3L-vw-4Ie">
+                                        <connections>
+                                            <action selector="memoDataAdd:" destination="zhA-tI-e5N" id="Umf-eP-i5O"/>
+                                        </connections>
+                                    </barButtonItem>
                                 </items>
                                 <color key="tintColor" red="0.59999999999999998" green="0.40000000000000002" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             </toolbar>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="s1d-Je-HyT">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="160" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="s1d-Je-HyT">
                                 <rect key="frame" x="0.0" y="160" width="600" height="396"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -81,15 +104,21 @@
                             <constraint firstItem="2uJ-H1-0Hh" firstAttribute="leading" secondItem="wOk-ZF-Naa" secondAttribute="leadingMargin" id="JzU-Sn-qEM"/>
                             <constraint firstItem="s1d-Je-HyT" firstAttribute="top" secondItem="2uJ-H1-0Hh" secondAttribute="bottom" constant="12" id="M4l-sO-VKA"/>
                             <constraint firstAttribute="trailingMargin" secondItem="s1d-Je-HyT" secondAttribute="trailing" constant="-20" id="Yho-gs-7hT"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="S5C-gi-hvO" secondAttribute="trailing" constant="-20" id="bb1-kv-MWj"/>
                             <constraint firstItem="2uJ-H1-0Hh" firstAttribute="trailing" secondItem="wOk-ZF-Naa" secondAttribute="trailingMargin" id="cZ2-bI-nnt"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zuU-Li-KKf" secondAttribute="trailing" constant="-20" id="f3T-we-nue"/>
                             <constraint firstItem="zuU-Li-KKf" firstAttribute="top" secondItem="s1d-Je-HyT" secondAttribute="bottom" id="gca-aT-OE3"/>
+                            <constraint firstItem="S5C-gi-hvO" firstAttribute="leading" secondItem="wOk-ZF-Naa" secondAttribute="leadingMargin" constant="-20" id="hzr-OL-JcM"/>
+                            <constraint firstItem="S5C-gi-hvO" firstAttribute="top" secondItem="4rE-Sr-C9Y" secondAttribute="bottom" id="l1D-L3-AzX"/>
                             <constraint firstItem="4rE-Sr-C9Y" firstAttribute="top" secondItem="WGX-Ir-6a0" secondAttribute="bottom" id="sf1-mf-Wgn"/>
                             <constraint firstItem="2uJ-H1-0Hh" firstAttribute="top" secondItem="4rE-Sr-C9Y" secondAttribute="bottom" constant="12" id="tmT-12-1ID"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="dIr-4V-ma9"/>
                     <connections>
+                        <outlet property="memoDataSearchBar" destination="4rE-Sr-C9Y" id="RnD-xM-fyc"/>
+                        <outlet property="memoDataSegment" destination="2uJ-H1-0Hh" id="EW2-oY-NhB"/>
+                        <outlet property="memoDataTableView" destination="s1d-Je-HyT" id="mbh-qw-Pei"/>
                         <segue destination="Wgs-om-KFa" kind="show" identifier="goAdd" id="gYb-rz-xJz"/>
                         <segue destination="pCh-VH-ex0" kind="show" identifier="goDetail" id="EJz-f4-a8Q"/>
                     </connections>
@@ -126,7 +155,7 @@
                                     <constraint firstAttribute="height" constant="140" id="BfW-ag-vZd"/>
                                 </constraints>
                             </imageView>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="2Vg-Vd-Rhx">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Vg-Vd-Rhx">
                                 <rect key="frame" x="20" y="253" width="560" height="80"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -150,6 +179,7 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="cBg-Sw-BnV">
                                 <rect key="frame" x="20" y="356" width="560" height="224"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -361,7 +391,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jBx-kf-E9F">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="おみやげリストの追加" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jBx-kf-E9F">
                                 <rect key="frame" x="20" y="84" width="560" height="21"/>
                                 <color key="backgroundColor" red="0.80000000000000004" green="0.59999999999999998" blue="0.40000000000000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -377,7 +407,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="E1L-U5-Z6V"/>
                                 </constraints>
-                                <state key="normal" title="チョコレートの写真を追加する">
+                                <state key="normal" title="おみやげの写真を追加する">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <variation key="widthClass=compact" fixedFrame="YES">
@@ -386,6 +416,9 @@
                                 <variation key="heightClass=compact-widthClass=compact" fixedFrame="YES">
                                     <rect key="frame" x="20" y="340" width="560" height="40"/>
                                 </variation>
+                                <connections>
+                                    <action selector="addOmiyageDataAction:" destination="Wgs-om-KFa" eventType="touchUpInside" id="nyc-w5-BOm"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="選択したデータベース：Realm" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fFe-MC-QPf">
                                 <rect key="frame" x="20" y="113" width="560" height="20"/>
@@ -440,6 +473,7 @@
                             </textField>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="g1t-ab-Kzk">
                                 <rect key="frame" x="105" y="233" width="100" height="100"/>
+                                <color key="backgroundColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="9sD-hR-chf"/>
                                     <constraint firstAttribute="height" constant="100" id="G0e-qR-hqK"/>
@@ -464,17 +498,20 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="mh8-Ir-Psz"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <state key="normal" title="写真を投稿をする">
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
+                                <state key="normal" title="投稿">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="omiyageImageAction:" destination="Wgs-om-KFa" eventType="touchUpInside" id="GCF-ng-kVU"/>
+                                </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="こちらのメモ帳アプリは画像の追加ができます。画像はiPhoneのフォトライブラリーまたはカメラ機能を利用して撮影 or 画像を追加してください。追加のない場合についてはデフォルトの画像が入ります。" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="McY-0d-mIz">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="たくさん振るって画像を登録して下さいね。" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="McY-0d-mIz">
                                 <rect key="frame" x="227" y="233" width="353" height="70"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="aHx-eX-wU7"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -511,10 +548,24 @@
                             <constraint firstItem="g0O-0C-0RZ" firstAttribute="top" secondItem="jRB-0I-Hj7" secondAttribute="bottom" constant="15" id="sVN-fL-dmB"/>
                             <constraint firstItem="McY-0d-mIz" firstAttribute="top" secondItem="g0O-0C-0RZ" secondAttribute="bottom" constant="17" id="u9P-Xj-Cmi"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Td9-qo-o7D" appends="YES" id="ZLR-c7-mU6"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" id="jXd-ES-uyH"/>
+                    <connections>
+                        <outlet property="detailTextField" destination="g0O-0C-0RZ" id="fgI-qp-j8n"/>
+                        <outlet property="omiyageImageView" destination="g1t-ab-Kzk" id="hCr-2M-xl9"/>
+                        <outlet property="selectedDbText" destination="fFe-MC-QPf" id="kHe-Dm-bEY"/>
+                        <outlet property="titleTextField" destination="jRB-0I-Hj7" id="YSJ-It-0Up"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VDf-J7-s3J" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Td9-qo-o7D">
+                    <connections>
+                        <action selector="hideKeyboardAction:" destination="Wgs-om-KFa" id="E1F-sH-gTB"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1390" y="236"/>
         </scene>

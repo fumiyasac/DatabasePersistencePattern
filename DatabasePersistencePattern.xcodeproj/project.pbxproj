@@ -16,6 +16,11 @@
 		DE5098D91C2A596100BB94A1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE5098D71C2A596100BB94A1 /* LaunchScreen.storyboard */; };
 		DE5098E41C2A596200BB94A1 /* DatabasePersistencePatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5098E31C2A596200BB94A1 /* DatabasePersistencePatternTests.swift */; };
 		DE5098EF1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE5098EE1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift */; };
+		DEC176C91C397A84007118F2 /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC176C71C397A84007118F2 /* ListCell.swift */; };
+		DEC176CA1C397A84007118F2 /* ListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DEC176C81C397A84007118F2 /* ListCell.xib */; };
+		DEC176CF1C397ABF007118F2 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC176CD1C397ABF007118F2 /* CommentCell.swift */; };
+		DEC176D01C397ABF007118F2 /* CommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DEC176CE1C397ABF007118F2 /* CommentCell.xib */; };
+		DEC176D21C39E4E5007118F2 /* Omiyage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEC176D11C39E4E5007118F2 /* Omiyage.swift */; };
 		DED0558D1C38FC9D00CF451D /* AddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0558C1C38FC9D00CF451D /* AddController.swift */; };
 		DED0558F1C38FDD700CF451D /* DetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0558E1C38FDD700CF451D /* DetailController.swift */; };
 		DED055931C39110C00CF451D /* CommentAddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED055921C39110C00CF451D /* CommentAddController.swift */; };
@@ -55,6 +60,11 @@
 		DE5098EA1C2A596200BB94A1 /* DatabasePersistencePatternUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DatabasePersistencePatternUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE5098EE1C2A596200BB94A1 /* DatabasePersistencePatternUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabasePersistencePatternUITests.swift; sourceTree = "<group>"; };
 		DE5098F01C2A596200BB94A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DEC176C71C397A84007118F2 /* ListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
+		DEC176C81C397A84007118F2 /* ListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListCell.xib; sourceTree = "<group>"; };
+		DEC176CD1C397ABF007118F2 /* CommentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
+		DEC176CE1C397ABF007118F2 /* CommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CommentCell.xib; sourceTree = "<group>"; };
+		DEC176D11C39E4E5007118F2 /* Omiyage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Omiyage.swift; sourceTree = "<group>"; };
 		DED0558C1C38FC9D00CF451D /* AddController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddController.swift; sourceTree = "<group>"; };
 		DED0558E1C38FDD700CF451D /* DetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailController.swift; sourceTree = "<group>"; };
 		DED055921C39110C00CF451D /* CommentAddController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentAddController.swift; sourceTree = "<group>"; };
@@ -129,6 +139,7 @@
 		DE5098CA1C2A596100BB94A1 /* DatabasePersistencePattern */ = {
 			isa = PBXGroup;
 			children = (
+				DEC176C61C397A5C007118F2 /* Cell */,
 				DED0558B1C38FC5200CF451D /* Realm */,
 				DED0558A1C38F7E200CF451D /* CoreData */,
 				DE5098CB1C2A596100BB94A1 /* AppDelegate.swift */,
@@ -162,6 +173,17 @@
 			path = DatabasePersistencePatternUITests;
 			sourceTree = "<group>";
 		};
+		DEC176C61C397A5C007118F2 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				DEC176C71C397A84007118F2 /* ListCell.swift */,
+				DEC176C81C397A84007118F2 /* ListCell.xib */,
+				DEC176CD1C397ABF007118F2 /* CommentCell.swift */,
+				DEC176CE1C397ABF007118F2 /* CommentCell.xib */,
+			);
+			name = Cell;
+			sourceTree = "<group>";
+		};
 		DED0558A1C38F7E200CF451D /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -173,6 +195,7 @@
 		DED0558B1C38FC5200CF451D /* Realm */ = {
 			isa = PBXGroup;
 			children = (
+				DEC176D11C39E4E5007118F2 /* Omiyage.swift */,
 			);
 			name = Realm;
 			sourceTree = "<group>";
@@ -284,7 +307,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DEC176D01C397ABF007118F2 /* CommentCell.xib in Resources */,
 				DE5098D91C2A596100BB94A1 /* LaunchScreen.storyboard in Resources */,
+				DEC176CA1C397A84007118F2 /* ListCell.xib in Resources */,
 				DE5098D61C2A596100BB94A1 /* Assets.xcassets in Resources */,
 				DE5098D11C2A596100BB94A1 /* Main.storyboard in Resources */,
 			);
@@ -361,10 +386,13 @@
 			files = (
 				DED055931C39110C00CF451D /* CommentAddController.swift in Sources */,
 				DE5098CE1C2A596100BB94A1 /* ViewController.swift in Sources */,
+				DEC176D21C39E4E5007118F2 /* Omiyage.swift in Sources */,
 				DE5098CC1C2A596100BB94A1 /* AppDelegate.swift in Sources */,
+				DEC176C91C397A84007118F2 /* ListCell.swift in Sources */,
 				DE5098D41C2A596100BB94A1 /* DatabasePersistencePattern.xcdatamodeld in Sources */,
 				DED0558F1C38FDD700CF451D /* DetailController.swift in Sources */,
 				DED0558D1C38FC9D00CF451D /* AddController.swift in Sources */,
+				DEC176CF1C397ABF007118F2 /* CommentCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
