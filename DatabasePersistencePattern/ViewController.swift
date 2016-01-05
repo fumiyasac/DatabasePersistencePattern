@@ -248,10 +248,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
         self.changeFetchTargetDb(self.dbDefinitionValue)
         
-        //Debug.
-        print(self.searchResultRealm)
-        print(self.searchResultCoreData)
-        
     }
     
     //値によって読み込むDbを変更する
@@ -285,7 +281,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.searchResultRealm.addObject(omiyage)
             }
         }
-        print(self.searchResultRealm)
+        //Debug.
+        //print(self.searchResultRealm)
         
         self.memoDataSegment.selectedSegmentIndex = DbDefinition.RealmUse.rawValue
         
@@ -337,7 +334,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             if self.cellCount != 0 {
                 self.searchResultCoreData = results
             }
-            print(self.searchResultCoreData)
+            //Debug.
+            //print(self.searchResultCoreData)
             
         //失敗時
         } else {

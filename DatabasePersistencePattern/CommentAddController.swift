@@ -7,9 +7,8 @@
 //
 
 import UIKit
-
-import RealmSwift
 import CoreData
+import RealmSwift
 
 class CommentAddController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 

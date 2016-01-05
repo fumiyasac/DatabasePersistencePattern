@@ -35,8 +35,9 @@ class DetailController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        print(self.detailId)
-        print(self.detailTitle)
+        //Debug.
+        //print(self.detailId)
+        //print(self.detailTitle)
         
         //Realmのとき
         if self.selectedDb == DbDefinition.RealmUse.rawValue {
@@ -177,7 +178,8 @@ class DetailController: UIViewController, UITableViewDelegate, UITableViewDataSo
                 self.resultRealm.addObject(omiyage)
             }
         }
-        print(self.resultRealm)
+        //Debug.
+        //print(self.resultRealm)
         self.reloadData()
     }
     // ----- ↑↑↑Realm処理：ここまで↑↑↑ -----
@@ -216,7 +218,8 @@ class DetailController: UIViewController, UITableViewDelegate, UITableViewDataSo
             if self.cellCount != 0 {
                 self.resultCoreData = results
             }
-            print(self.resultCoreData)
+            //Debug.
+            //print(self.resultCoreData)
             
             //失敗時
         } else {
