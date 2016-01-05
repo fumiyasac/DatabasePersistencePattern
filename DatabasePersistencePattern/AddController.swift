@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CoreData
 import RealmSwift
 
 class AddController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -36,12 +35,7 @@ class AddController: UIViewController, UITextFieldDelegate, UIImagePickerControl
         self.omiyageImageView.contentMode = UIViewContentMode.ScaleToFill
         self.omiyageImage = UIImage(named: "noimage_omiyage_comment.jpg")
         self.omiyageImageView.image = self.omiyageImage
-        
-        if self.selectedDb == DbDefinition.RealmUse.rawValue {
-            self.selectedDbText.text = "選択したデータベース：Realm"
-        } else if self.selectedDb == DbDefinition.CoreDataUse.rawValue {
-            self.selectedDbText.text = "選択したデータベース：CoreData"
-        }
+        self.selectedDbText.text = "選択したデータベース：Realm"
         
         //UITextFieldのデリゲート設定
         self.titleTextField.delegate = self
@@ -177,45 +171,17 @@ class AddController: UIViewController, UITextFieldDelegate, UIImagePickerControl
         //OK:データを1件セーブする
         } else {
             
-            if self.selectedDb == DbDefinition.RealmUse.rawValue {
             
-                //Realmにデータを1件登録する
-                let omiyageObject = Omiyage.create()
-                omiyageObject.title = self.omiyageTitle
-                omiyageObject.detail = self.omiyageDetail
-                omiyageObject.image = self.omiyageImage
-                omiyageObject.average = Double(0)
-                omiyageObject.createDate = self.currentDate
-                
-                //登録処理
-                omiyageObject.save()
-                
-            } else {
-                
-                //NSManagedObjectContext取得
-                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-                
-                //新規追加
-                let newMemoEntity = NSEntityDescription.insertNewObjectForEntityForName("CDOmiyage", inManagedObjectContext: managedObjectContext)
-                
-                let imageData: NSData = UIImagePNGRepresentation(self.omiyageImage)!
-                
-                newMemoEntity.setValue(Int(self.getNextOmiyageId()), forKey:"cd_id")
-                newMemoEntity.setValue(self.omiyageTitle, forKey:"cd_title")
-                newMemoEntity.setValue(self.omiyageDetail, forKey:"cd_detail")
-                newMemoEntity.setValue(Double(0), forKey:"cd_average")
-                newMemoEntity.setValue(imageData, forKey:"cd_imageData")
-                newMemoEntity.setValue(self.currentDate, forKey:"cd_createDate")
-                
-                //登録処理
-                do {
-                    try managedObjectContext.save()
-                } catch _ as NSError {
-                    abort()
-                }
-                
-            }
+            //Realmにデータを1件登録する
+            let omiyageObject = Omiyage.create()
+            omiyageObject.title = self.omiyageTitle
+            omiyageObject.detail = self.omiyageDetail
+            omiyageObject.image = self.omiyageImage
+            omiyageObject.average = Double(0)
+            omiyageObject.createDate = self.currentDate
+            
+            //登録処理
+            omiyageObject.save()
             
             //全部テキストフィールドを元に戻す
             self.omiyageImageView.contentMode = UIViewContentMode.ScaleToFill
@@ -242,40 +208,7 @@ class AddController: UIViewController, UITextFieldDelegate, UIImagePickerControl
         }
         
     }
-    
-    //データの最大値からダミーのIDを取得する
-    private func getNextOmiyageId() -> Int64 {
         
-        //NSManagedObjectContext取得
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-        
-        //フェッチリクエストと条件の設定
-        let fetchRequest = NSFetchRequest(entityName: "CDOmiyage")
-        
-        //検索条件を設定する
-        let keyPathExpression = NSExpression(forKeyPath: "cd_id")
-        let maxExpression = NSExpression(forFunction: "max:", arguments: [keyPathExpression])
-        let description = NSExpressionDescription()
-        description.name = "maxId"
-        description.expression = maxExpression
-        description.expressionResultType = .Integer32AttributeType
-        
-        //フェッチ結果を出力する
-        fetchRequest.propertiesToFetch = [description]
-        fetchRequest.resultType = .DictionaryResultType
-        
-        //フェッチ結果をreturn
-        if let results = try? managedObjectContext.executeFetchRequest(fetchRequest) {
-            if results.count > 0 {
-                let maxId = results[0]["maxId"] as! Int
-                return maxId + 1
-            }
-        }
-        return 1
-        
-    }
-    
     //登録が完了した際のアクション
     func saveComplete(ac: UIAlertAction) -> Void {
         self.navigationController?.popViewControllerAnimated(true)

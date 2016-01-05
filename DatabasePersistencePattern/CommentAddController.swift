@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import CoreData
 import RealmSwift
 
 class CommentAddController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -37,11 +36,7 @@ class CommentAddController: UIViewController, UITextFieldDelegate, UIImagePicker
         self.omiyageCommentImage = UIImage(named: "noimage_omiyage_comment.jpg")
         self.commentImageView.image = self.omiyageCommentImage
         
-        if self.selectedDb == DbDefinition.RealmUse.rawValue {
-            self.selectedCommentDbText.text = "選択したデータベース：Realm"
-        } else if self.selectedDb == DbDefinition.CoreDataUse.rawValue {
-            self.selectedCommentDbText.text = "選択したデータベース：CoreData"
-        }
+        self.selectedCommentDbText.text = "選択したデータベース：Realm"
         
         //UITextFieldのデリゲート設定
         self.commentTextField.delegate = self
@@ -176,51 +171,19 @@ class CommentAddController: UIViewController, UITextFieldDelegate, UIImagePicker
         //OK:データを1件セーブする
         } else {
             
-            if self.selectedDb == DbDefinition.RealmUse.rawValue {
+            //Realmにデータを1件登録する
+            let omiyageCommentObject = OmiyageComment.create()
+            omiyageCommentObject.comment = self.omiyageCommentDetail
+            omiyageCommentObject.star = self.omiyageCommentStar
+            omiyageCommentObject.image = self.omiyageCommentImage
+            omiyageCommentObject.omiyage_id = self.detailId
                 
-                //Realmにデータを1件登録する
-                let omiyageCommentObject = OmiyageComment.create()
-                omiyageCommentObject.comment = self.omiyageCommentDetail
-                omiyageCommentObject.star = self.omiyageCommentStar
-                omiyageCommentObject.image = self.omiyageCommentImage
-                omiyageCommentObject.omiyage_id = self.detailId
+            //登録処理
+            omiyageCommentObject.save()
                 
-                //登録処理
-                omiyageCommentObject.save()
-                
-                //平均値を更新
-                let average = OmiyageComment.getAverage(self.detailId)
-                Omiyage.updateAverage(average, target_id: self.detailId)
-                
-            } else {
-                
-                //NSManagedObjectContext取得
-                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-                let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-                
-                //新規追加
-                let newMemoEntity = NSEntityDescription.insertNewObjectForEntityForName("CDOmiyageComment", inManagedObjectContext: managedObjectContext)
-                
-                let imageData: NSData = UIImagePNGRepresentation(self.omiyageCommentImage)!
-                
-                newMemoEntity.setValue(Int(self.getNextOmiyageCommentId()), forKey:"cd_comment_id")
-                newMemoEntity.setValue(self.detailId, forKey:"cd_id")
-                newMemoEntity.setValue(self.omiyageCommentDetail, forKey:"cd_comment_comment")
-                newMemoEntity.setValue(self.omiyageCommentStar, forKey:"cd_comment_star")
-                newMemoEntity.setValue(imageData, forKey:"cd_comment_imageData")
-                
-                //登録処理
-                do {
-                    try managedObjectContext.save()
-                } catch _ as NSError {
-                    abort()
-                }
-                
-                //Omiyageのaverageカラムを更新する
-                let average: Double = self.getAverage(self.detailId)
-                self.editAverageToCoreData(average, target_id: self.detailId)
-                
-            }
+            //平均値を更新
+            let average = OmiyageComment.getAverage(self.detailId)
+            Omiyage.updateAverage(average, target_id: self.detailId)
             
             //全部テキストフィールドを元に戻す
             self.commentImageView.contentMode = UIViewContentMode.ScaleToFill
@@ -249,99 +212,6 @@ class CommentAddController: UIViewController, UITextFieldDelegate, UIImagePicker
     //登録が完了した際のアクション
     func saveComplete(ac: UIAlertAction) -> Void {
         self.navigationController?.popViewControllerAnimated(true)
-    }
-    
-    //データの最大値からダミーのIDを取得する
-    private func getNextOmiyageCommentId() -> Int64 {
-        
-        //NSManagedObjectContext取得
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-        
-        //フェッチリクエストと条件の設定
-        let fetchRequest = NSFetchRequest(entityName: "CDOmiyageComment")
-        
-        //検索条件を設定する
-        let keyPathExpression = NSExpression(forKeyPath: "cd_comment_id")
-        let maxExpression = NSExpression(forFunction: "max:", arguments: [keyPathExpression])
-        let description = NSExpressionDescription()
-        description.name = "maxId"
-        description.expression = maxExpression
-        description.expressionResultType = .Integer32AttributeType
-        
-        //フェッチ結果を出力する
-        fetchRequest.propertiesToFetch = [description]
-        fetchRequest.resultType = .DictionaryResultType
-        
-        //フェッチ結果をreturn
-        if let results = try? managedObjectContext.executeFetchRequest(fetchRequest) {
-            if results.count > 0 {
-                let maxId = results[0]["maxId"] as! Int
-                return maxId + 1
-            }
-        }
-        return 1
-    }
-    
-    //平均値を取得する
-    private func getAverage(target_id: Int) -> Double {
-        
-        //NSManagedObjectContext取得
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-        
-        //フェッチリクエストと条件の設定
-        let fetchRequest = NSFetchRequest(entityName: "CDOmiyageComment")
-        
-        //検索条件を設定する
-        fetchRequest.predicate = NSPredicate(format:"cd_id = \(target_id)")
-        let keyPathExpression = NSExpression(forKeyPath: "cd_comment_star")
-        let maxExpression = NSExpression(forFunction: "average:", arguments: [keyPathExpression])
-        let description = NSExpressionDescription()
-        description.name = "avgStar"
-        description.expression = maxExpression
-        description.expressionResultType = .DoubleAttributeType
-        
-        //フェッチ結果を出力する
-        fetchRequest.propertiesToFetch = [description]
-        fetchRequest.resultType = .DictionaryResultType
-        
-        //フェッチ結果をreturn
-        if let results = try? managedObjectContext.executeFetchRequest(fetchRequest) {
-            if results.count > 0 {
-                let avgStar = results[0]["avgStar"] as! Double
-                return avgStar
-            }
-        }
-        return 0.0
-    }
-    
-    //該当のCoreDataレコードを編集 ※検索⇒変更の流れ
-    private func editAverageToCoreData(average: Double, target_id: Int) {
-        
-        //NSManagedObjectContext取得
-        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
-        
-        //フェッチリクエストと条件の設定
-        let fetchRequest = NSFetchRequest(entityName: "CDOmiyage")
-        fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.predicate = NSPredicate(format:"cd_id = \(target_id)")
-        
-        //フェッチ結果
-        let fetchResult: NSArray = try! managedObjectContext.executeFetchRequest(fetchRequest)
-        
-        //更新対象のエンティティ
-        let editMemoEntity = fetchResult.objectAtIndex(0) as! NSManagedObject
-        editMemoEntity.setValue(average, forKey:"cd_average")
-        
-        //更新処理
-        do {
-            try managedObjectContext.save()
-        } catch _ as NSError {
-            abort()
-        }
-        
     }
     
     override func didReceiveMemoryWarning() {

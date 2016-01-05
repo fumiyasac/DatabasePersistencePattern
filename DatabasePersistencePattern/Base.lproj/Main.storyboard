@@ -45,7 +45,7 @@
                                 <rect key="frame" x="20" y="120" width="560" height="29"/>
                                 <segments>
                                     <segment title="Realm"/>
-                                    <segment title="CoreData"/>
+                                    <segment title="CoreData" enabled="NO"/>
                                 </segments>
                                 <color key="tintColor" red="1" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
