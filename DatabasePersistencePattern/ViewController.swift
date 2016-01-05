@@ -7,34 +7,9 @@
 //
 
 import UIKit
+import CoreData
+import RealmSwift
 
-//格納用DBの選択enum
-enum DbDefinition: Int {
-    
-    //セグメント番号の名称
-    case RealmUse, CoreDataUse
-    
-    //enumの値を返す
-    func returnValue() -> Int {
-        return self.rawValue
-    }
-    
-}
-
-//ソートの選択enum
-enum SortDefinition: Int {
-    
-    //セグメント番号の名称
-    case SortScore, SortDate
-    
-    //enumの値を返す
-    func returnValue() -> Int {
-        return self.rawValue
-    }
-    
-}
-
-//メインのビューコントローラー
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UINavigationControllerDelegate, UISearchBarDelegate {
 
     //Outlet接続したもの
@@ -43,10 +18,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var memoDataTableView: UITableView!
     
     //変数＆定数
-    var dbDefinitionValue : Int!
-    var sortDefinitionValue: Int!
+    var dbDefinitionValue : Int! = DbDefinition.RealmUse.rawValue
+    var sortDefinitionValue: Int! = SortDefinition.SortId.rawValue
     
-    var seachResultArray: NSMutableArray = []
+    var sortOrder: String! = ""
+    var containsParameter: String! = ""
+    
+    var searchResultRealm: NSMutableArray = []
+    var searchResultCoreData: AnyObject?
+    
+    var commentCount: Int = 0
+    var averageAmount: Double = 0.0
     
     var searchActive: Bool = false
     
@@ -55,17 +37,12 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //出現中の処理
     override func viewWillAppear(animated: Bool) {
-        
+        self.fetchAndReloadData()
     }
     
     //出現後の処理
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
-        //デフォルト選択
-        self.dbDefinitionValue = DbDefinition.RealmUse.rawValue
-        self.sortDefinitionValue = SortDefinition.SortDate.rawValue
         
         //ナビゲーションのデリゲート設定
         self.navigationController?.delegate = self
@@ -73,41 +50,52 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         //検索バーのデリゲート設定
         self.memoDataSearchBar.delegate = self
-        
+        self.memoDataSearchBar.showsCancelButton = true
+        self.memoDataSearchBar.placeholder = "検索したい文字を入力"
+
         //テーブルビューのデリゲート設定
         self.memoDataTableView.delegate = self
         self.memoDataTableView.dataSource = self
+        self.memoDataTableView.allowsSelection = true
         
         //Xibのクラスを読み込む
         let nibDefault:UINib = UINib(nibName: "ListCell", bundle: nil)
         self.memoDataTableView.registerNib(nibDefault, forCellReuseIdentifier: "ListCell")
     }
+    
+    //各データのfetchとテーブルビューのリロードを行う
+    func fetchAndReloadData() {
+        
+        //Realmのとき
+        if self.dbDefinitionValue == DbDefinition.RealmUse.rawValue {
 
+            self.fetchObjectFromRealm()
+        
+        //CoreDataのとき
+        } else {
+            
+            self.fetchObjectFromCoreData()
+            
+        }
+    }
+    
     //SearchBarに関する設定一覧
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        self.searchActive = true
-    }
-    
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        self.searchActive = false
-    }
-    
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
-        self.searchActive = false
-    }
-    
-    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
-        self.searchActive = false
+        self.view.endEditing(true)
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        self.containsParameter = searchText
+        self.changeFetchTargetDb(self.dbDefinitionValue)
+        
+        self.view.endEditing(true)
         
         if self.cellCount == 0 {
             self.searchActive = false
         } else {
             self.searchActive = true
         }
-        self.reloadData()
     }
     
     //TableViewに関する設定一覧
@@ -116,7 +104,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10 //self.cellCount
+        return self.cellCount
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -124,6 +112,45 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //Xibファイルを元にデータを作成する
         let cell = tableView.dequeueReusableCellWithIdentifier("ListCell") as? ListCell
         
+        //Realmのとき
+        if self.dbDefinitionValue == DbDefinition.RealmUse.rawValue {
+            
+            //テキスト・画像等の表示(Realm)
+            let omiyageData: Omiyage = self.searchResultRealm[indexPath.row] as! Omiyage
+            
+            cell!.listTitle.text = omiyageData.title
+            cell!.listComments.text = omiyageData.detail
+
+            cell!.listDate.text = ConvertNSDate.convertNSDateToString(omiyageData.createDate)
+
+            let averageRatio = NSString(format: "%.1f", omiyageData.average) as String
+            cell!.listAverage.text = "⭐️" + averageRatio + "点"
+            
+            cell!.listImage.image = omiyageData.image
+
+        //CoreDataのとき
+        } else {
+            
+            //テキスト・画像等の表示(CoreData)
+            let cdOmiyageData: AnyObject? = self.searchResultCoreData?.objectAtIndex(indexPath.row)
+
+            cell!.listTitle.text = cdOmiyageData?.valueForKey("cd_title") as? String
+            cell!.listComments.text = cdOmiyageData?.valueForKey("cd_detail") as? String
+            
+            let displayDate: NSDate = cdOmiyageData?.valueForKey("cd_createDate") as! NSDate
+            cell!.listDate.text = ConvertNSDate.convertNSDateToString(displayDate)
+            
+            let dispRatio = cdOmiyageData?.valueForKey("cd_average") as! Double
+            let averageRatio = NSString(format: "%.1f", dispRatio) as String
+            cell!.listAverage.text = "⭐️" + averageRatio + "点"
+            
+            let dispImg: NSData = cdOmiyageData?.valueForKey("cd_imageData") as! NSData
+            cell!.listImage.image = UIImage(data: dispImg)
+            
+        }
+        cell!.listImage.contentMode = UIViewContentMode.ScaleAspectFill
+        cell!.listImage.userInteractionEnabled = false
+
         //セルのアクセサリタイプと背景の設定
         cell!.accessoryType = UITableViewCellAccessoryType.None
         cell!.selectionStyle = UITableViewCellSelectionStyle.None
@@ -133,6 +160,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
+        //Realmのとき
+        if self.dbDefinitionValue == DbDefinition.RealmUse.rawValue {
+            
+            //テキスト・画像等の表示(Realm)
+            let omiyageData: Omiyage = self.searchResultRealm[indexPath.row] as! Omiyage
+            
+            let dict: NSDictionary = [
+                "id" : omiyageData.id,
+                "title" : omiyageData.title
+            ]
+            performSegueWithIdentifier("goDetail", sender: dict)
+        
+        //CoreDataのとき
+        } else {
+            
+            //テキスト・画像等の表示(CoreData)
+            let cdOmiyageData: AnyObject? = self.searchResultCoreData?.objectAtIndex(indexPath.row)
+            
+            let dict: NSDictionary = [
+                "id" : (cdOmiyageData?.valueForKey("cd_id"))!,
+                "title" :(cdOmiyageData?.valueForKey("cd_title") as? String)!
+            ]
+            performSegueWithIdentifier("goDetail", sender: dict)
+            
+        }
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -150,18 +202,27 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             let addController = segue.destinationViewController as! AddController
             addController.selectedDb = self.dbDefinitionValue
+            
+        } else if segue.identifier == "goDetail" {
+            
+            let detailController = segue.destinationViewController as! DetailController
+            let detailDataBean = sender as? NSDictionary
+                
+            detailController.selectedDb = self.dbDefinitionValue
+            detailController.detailId = detailDataBean!["id"] as? Int
+            detailController.detailTitle = detailDataBean!["title"] as? String
         }
     }
     
     //ボタンアクション
     @IBAction func memoDataCommentSort(sender: UIBarButtonItem) {
         self.sortDefinitionValue = SortDefinition.SortScore.rawValue
-        self.changeFetchTargetDb(self.dbDefinitionValue, sortDefinitionValue: self.sortDefinitionValue)
+        self.changeFetchTargetDb(self.dbDefinitionValue)
     }
     
     @IBAction func memoDataDateSort(sender: UIBarButtonItem) {
-        self.sortDefinitionValue = SortDefinition.SortDate.rawValue
-        self.changeFetchTargetDb(self.dbDefinitionValue, sortDefinitionValue: self.sortDefinitionValue)
+        self.sortDefinitionValue = SortDefinition.SortId.rawValue
+        self.changeFetchTargetDb(self.dbDefinitionValue)
     }
     
     @IBAction func memoDataAdd(sender: UIBarButtonItem) {
@@ -178,50 +239,118 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             break
             
         case DbDefinition.CoreDataUse.rawValue:
-            //コメントアウト
-            //self.dbDefinitionValue = DbDefinition.CoreDataUse.rawValue
+            self.dbDefinitionValue = DbDefinition.CoreDataUse.rawValue
             break
             
         default:
             self.dbDefinitionValue = DbDefinition.RealmUse.rawValue
             break
         }
-        self.changeFetchTargetDb(self.dbDefinitionValue, sortDefinitionValue: self.sortDefinitionValue)
+        self.changeFetchTargetDb(self.dbDefinitionValue)
+        
+        //Debug.
+        print(self.searchResultRealm)
+        print(self.searchResultCoreData)
+        
     }
     
     //値によって読み込むDbを変更する
-    func changeFetchTargetDb(dbDefinitionValue: Int, sortDefinitionValue: Int) -> NSMutableArray {
+    func changeFetchTargetDb(dbDefinitionValue: Int) {
         
-        var targetArray: NSMutableArray = []
         if dbDefinitionValue == DbDefinition.RealmUse.rawValue {
-            targetArray = self.changeDataToRealm(sortDefinitionValue)
+            self.fetchObjectFromRealm()
         } else {
-            targetArray = self.changeDataToCoreData(sortDefinitionValue)
+            self.fetchObjectFromCoreData()
         }
-        return targetArray
-    }
-
-    //CoreDataからデータをフェッチする
-    func changeDataToCoreData(sort: Int) -> NSMutableArray {
-        
-        //var targetArray: NSMutableArray = []
-        let targetArray: NSMutableArray = []
-        
-        return targetArray
     }
     
-    //Realmからデータをフェッチする
-    func changeDataToRealm(sort: Int) -> NSMutableArray {
+    //Realmでのデータ取得時の処理
+    // ----- ↓↓↓Realm処理：ここから↓↓↓ -----
+    func fetchObjectFromRealm() {
         
-        //var targetArray: NSMutableArray = []
-        let targetArray: NSMutableArray = []
+        self.searchResultRealm.removeAllObjects()
         
-        return targetArray
+        if self.sortDefinitionValue == SortDefinition.SortId.rawValue {
+            self.sortOrder = "id"
+        } else {
+            self.sortOrder = "average"
+        }
+        
+        let omiyages = Omiyage.fetchAllOmiyageList("\(self.sortOrder)", containsParameter: self.containsParameter)
+        
+        self.cellCount = omiyages.count
+        
+        if self.cellCount != 0 {
+            for omiyage in omiyages {
+                self.searchResultRealm.addObject(omiyage)
+            }
+        }
+        print(self.searchResultRealm)
+        
+        self.memoDataSegment.selectedSegmentIndex = DbDefinition.RealmUse.rawValue
+        
+        self.reloadData()
     }
+    // ----- ↑↑↑Realm処理：ここまで↑↑↑ -----
+    
+    //CoreDataでのデータ取得時の処理
+    // ----- ↓↓↓CoreData処理：ここから↓↓↓ -----
+    func fetchObjectFromCoreData() {
+        
+        var error: NSError?
+        
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
+        
+        //フェッチリクエストと条件の設定
+        let fetchRequest = NSFetchRequest(entityName: "CDOmiyage")
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        if !self.containsParameter.isEmpty {
+        
+            fetchRequest.predicate = NSPredicate(format: "cd_title contains %@ OR cd_detail contains %@", self.containsParameter, self.containsParameter)
+        }
+        
+        if self.sortDefinitionValue == SortDefinition.SortId.rawValue {
+            self.sortOrder = "cd_id"
+        } else {
+            self.sortOrder = "cd_average"
+        }
+        
+        let sortDescriptor = NSSortDescriptor(key: self.sortOrder, ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        //フェッチ結果
+        let fetchResults: [AnyObject]?
+        do {
+            fetchResults = try managedObjectContext.executeFetchRequest(fetchRequest)
+        } catch let error1 as NSError {
+            error = error1
+            fetchResults = nil
+        }
+        
+        //データの取得処理成功時
+        if let results: AnyObject = fetchResults {
+            
+            self.cellCount = results.count
+            
+            if self.cellCount != 0 {
+                self.searchResultCoreData = results
+            }
+            print(self.searchResultCoreData)
+            
+        //失敗時
+        } else {
+            print("Could not fetch \(error) , \(error!.userInfo)")
+        }
+                
+        self.memoDataSegment.selectedSegmentIndex = DbDefinition.CoreDataUse.rawValue
+        self.reloadData()
+    }
+    // ----- ↑↑↑CoreData処理：ここまで↑↑↑ -----
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
 }

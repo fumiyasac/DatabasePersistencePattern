@@ -1,8 +1,8 @@
 //
-//  Omiyage.swift
+//  OmiyageComment.swift
 //  DatabasePersistencePattern
 //
-//  Created by 酒井文也 on 2016/01/04.
+//  Created by 酒井文也 on 2016/01/05.
 //  Copyright © 2016年 just1factory. All rights reserved.
 //
 
@@ -11,7 +11,7 @@ import UIKit
 //Realmクラスのインポート
 import RealmSwift
 
-class Omiyage: Object {
+class OmiyageComment: Object {
     
     //Realmクラスのインスタンス
     static let realm = try! Realm()
@@ -19,17 +19,14 @@ class Omiyage: Object {
     //id
     dynamic var id = 0
     
-    //タイトル
-    dynamic var title = ""
+    //おみやげid
+    dynamic var omiyage_id = 0
     
-    //商品紹介
-    dynamic var detail = ""
+    //コメント
+    dynamic var comment = ""
     
     //評価
-    dynamic var average = 0.0
-    
-    //登録日
-    dynamic var createDate = NSDate(timeIntervalSince1970: 0)
+    dynamic var star = 0
     
     //その時の写真
     /**
@@ -78,16 +75,16 @@ class Omiyage: Object {
     }
     
     //新規追加用のインスタンス生成メソッド
-    static func create() -> Omiyage {
-        let omiyage = Omiyage()
-        omiyage.id = self.getLastId()
-        return omiyage
+    static func create() -> OmiyageComment {
+        let omiyageComment = OmiyageComment()
+        omiyageComment.id = self.getLastId()
+        return omiyageComment
     }
     
     //プライマリキーの作成メソッド
     static func getLastId() -> Int {
-        if let omiyage = realm.objects(Omiyage).last {
-            return omiyage.id + 1
+        if let omiyageComment = realm.objects(OmiyageComment).last {
+            return omiyageComment.id + 1
         } else {
             return 1
         }
@@ -95,44 +92,41 @@ class Omiyage: Object {
     
     //インスタンス保存用メソッド
     func save() {
-        try! Omiyage.realm.write {
-            Omiyage.realm.add(self)
+        try! OmiyageComment.realm.write {
+            OmiyageComment.realm.add(self)
         }
     }
-
-    //インスタンス保存用メソッド
-    static func updateAverage(average: Double, target_id: Int) {
-        let omiyages = realm.objects(Omiyage).filter("id = %@", target_id)
-        try! realm.write {
-            omiyages.setValue(average, forKey: "average")
+    
+    //平均値を取得
+    static func getAverage(target_id: Int) -> Double {
+        
+        if let average: Double = realm.objects(OmiyageComment).filter("omiyage_id = %@", target_id).average("star") {
+            return average
+        } else {
+            return 0.0
         }
     }
     
     //インスタンス削除用メソッド
     func delete() {
-        try! Omiyage.realm.write {
-            Omiyage.realm.delete(self)
+        try! OmiyageComment.realm.write {
+            OmiyageComment.realm.delete(self)
         }
     }
     
     //ソートをかけた順のデータの全件取得をする
-    static func fetchAllOmiyageList(sortOrder: String, containsParameter: String) -> [Omiyage] {
+    static func fetchAllOmiyageList(target_id: Int) -> [OmiyageComment] {
         
-        var omiyages: Results<Omiyage>
+        var omiyageComments: Results<OmiyageComment>
+        omiyageComments = realm.objects(OmiyageComment).filter("omiyage_id = %@", target_id).sorted("id", ascending: true)
         
-        if containsParameter.isEmpty {
-            omiyages = realm.objects(Omiyage).sorted("\(sortOrder)", ascending: false)
-        } else {
-            let predicate = NSPredicate(format: "title CONTAINS %@ OR detail CONTAINS %@", containsParameter, containsParameter)
-            omiyages = realm.objects(Omiyage).sorted("\(sortOrder)", ascending: false).filter(predicate)
+        var omiyageCommentList: [OmiyageComment] = []
+        for omiyageComment in omiyageComments {
+            omiyageCommentList.append(omiyageComment)
         }
-        
-        var omiyageList: [Omiyage] = []
-        for omiyage in omiyages {
-            omiyageList.append(omiyage)
-        }
-        return omiyageList
+        return omiyageCommentList
     }
     
 }
+
 

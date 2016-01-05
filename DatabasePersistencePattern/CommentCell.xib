@@ -22,7 +22,7 @@
                             <constraint firstAttribute="width" constant="50" id="gtG-oh-mUd"/>
                         </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6pd-ht-X1b">
@@ -42,7 +42,7 @@
                         <color key="textColor" red="1" green="0.20000000000000001" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r14-ZL-aMc">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r14-ZL-aMc">
                         <rect key="frame" x="73" y="10" width="218" height="20"/>
                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -62,9 +62,11 @@
                     <constraint firstItem="r14-ZL-aMc" firstAttribute="leading" secondItem="6pd-ht-X1b" secondAttribute="trailing" constant="13" id="oQx-I3-QsJ"/>
                 </constraints>
             </tableViewCellContentView>
+            <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
                 <outlet property="commentImage" destination="6pd-ht-X1b" id="v7x-br-yEM"/>
                 <outlet property="commentPoint" destination="hzR-4r-RDt" id="rxf-at-Dpq"/>
+                <outlet property="commentStar" destination="QGh-cM-F5n" id="NuK-Qz-46I"/>
                 <outlet property="commentText" destination="r14-ZL-aMc" id="80M-VN-f1L"/>
             </connections>
         </tableViewCell>

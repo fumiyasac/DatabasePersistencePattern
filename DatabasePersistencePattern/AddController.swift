@@ -8,7 +8,10 @@
 
 import UIKit
 
-class AddController: UIViewController,UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
+import RealmSwift
+import CoreData
+
+class AddController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     //Outlet接続したもの
     @IBOutlet weak var selectedDbText: UILabel!
@@ -27,14 +30,19 @@ class AddController: UIViewController,UITextFieldDelegate, UIImagePickerControll
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        //ナビゲーションのデリゲート設定
+        self.navigationController?.delegate = self
+        self.navigationItem.title = ""
+        
+        self.omiyageImageView.contentMode = UIViewContentMode.ScaleToFill
+        self.omiyageImage = UIImage(named: "noimage_omiyage_comment.jpg")
+        self.omiyageImageView.image = self.omiyageImage
         
         if self.selectedDb == DbDefinition.RealmUse.rawValue {
             self.selectedDbText.text = "選択したデータベース：Realm"
         } else if self.selectedDb == DbDefinition.CoreDataUse.rawValue {
             self.selectedDbText.text = "選択したデータベース：CoreData"
         }
-        print(self.selectedDb)
         
         //UITextFieldのデリゲート設定
         self.titleTextField.delegate = self
@@ -145,9 +153,6 @@ class AddController: UIViewController,UITextFieldDelegate, UIImagePickerControll
         self.omiyageImage = self.omiyageImageView.image
         
         //バリデーションを通す前の準備
-        self.titleTextField.delegate = self
-        self.detailTextField.delegate = self
-        
         self.omiyageTitle = self.titleTextField.text
         self.omiyageDetail = self.detailTextField.text
         self.currentDate = NSDate()
@@ -170,20 +175,57 @@ class AddController: UIViewController,UITextFieldDelegate, UIImagePickerControll
             )
             presentViewController(errorAlert, animated: true, completion: nil)
             
-        //OK:データを1件Realmにセーブする
+        //OK:データを1件セーブする
         } else {
             
-            //Realmにデータを1件登録する
-            let omiyageObject = Omiyage.create()
-            omiyageObject.title = self.omiyageTitle
-            omiyageObject.detail = self.omiyageDetail
-            omiyageObject.image = self.omiyageImage
-            omiyageObject.average = Double(0)
-            omiyageObject.createDate = self.currentDate
+            if self.selectedDb == DbDefinition.RealmUse.rawValue {
+            
+                //Realmにデータを1件登録する
+                let omiyageObject = Omiyage.create()
+                omiyageObject.title = self.omiyageTitle
+                omiyageObject.detail = self.omiyageDetail
+                omiyageObject.image = self.omiyageImage
+                omiyageObject.average = Double(0)
+                omiyageObject.createDate = self.currentDate
+                
+                //登録処理
+                omiyageObject.save()
+                
+            } else {
+                
+                //NSManagedObjectContext取得
+                let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+                let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
+                
+                //新規追加
+                let newMemoEntity = NSEntityDescription.insertNewObjectForEntityForName("CDOmiyage", inManagedObjectContext: managedObjectContext)
+                
+                let imageData: NSData = UIImagePNGRepresentation(self.omiyageImage)!
+                
+                newMemoEntity.setValue(Int(self.getNextOmiyageId()), forKey:"cd_id")
+                newMemoEntity.setValue(self.omiyageTitle, forKey:"cd_title")
+                newMemoEntity.setValue(self.omiyageDetail, forKey:"cd_detail")
+                newMemoEntity.setValue(Double(0), forKey:"cd_average")
+                newMemoEntity.setValue(imageData, forKey:"cd_imageData")
+                newMemoEntity.setValue(self.currentDate, forKey:"cd_createDate")
+                
+                //登録処理
+                do {
+                    try managedObjectContext.save()
+                } catch _ as NSError {
+                    abort()
+                }
+                
+            }
+            
+            //全部テキストフィールドを元に戻す
+            self.omiyageImageView.contentMode = UIViewContentMode.ScaleToFill
+            self.omiyageImage = UIImage(named: "noimage_omiyage_comment.jpg")
+            self.omiyageImageView.image = self.omiyageImage
+            self.titleTextField.text = ""
+            self.detailTextField.text = ""
 
-            //登録処理
-            omiyageObject.save()
-
+            
             //登録されたアラートを表示してOKを押すと戻る
             let errorAlert = UIAlertController(
                 title: "完了",
@@ -202,25 +244,46 @@ class AddController: UIViewController,UITextFieldDelegate, UIImagePickerControll
         
     }
     
+    //データの最大値からダミーのIDを取得する
+    private func getNextOmiyageId() -> Int64 {
+        
+        //NSManagedObjectContext取得
+        let appDel: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let managedObjectContext: NSManagedObjectContext = appDel.managedObjectContext
+        
+        //フェッチリクエストと条件の設定
+        let fetchRequest = NSFetchRequest(entityName: "CDOmiyage")
+        
+        //検索条件を設定する
+        let keyPathExpression = NSExpression(forKeyPath: "cd_id")
+        let maxExpression = NSExpression(forFunction: "max:", arguments: [keyPathExpression])
+        let description = NSExpressionDescription()
+        description.name = "maxId"
+        description.expression = maxExpression
+        description.expressionResultType = .Integer32AttributeType
+        
+        //フェッチ結果を出力する
+        fetchRequest.propertiesToFetch = [description]
+        fetchRequest.resultType = .DictionaryResultType
+        
+        //フェッチ結果をreturn
+        if let results = try? managedObjectContext.executeFetchRequest(fetchRequest) {
+            if results.count > 0 {
+                let maxId = results[0]["maxId"] as! Int
+                return maxId + 1
+            }
+        }
+        return 1
+        
+    }
+    
     //登録が完了した際のアクション
     func saveComplete(ac: UIAlertAction) -> Void {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.navigationController?.popViewControllerAnimated(true)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

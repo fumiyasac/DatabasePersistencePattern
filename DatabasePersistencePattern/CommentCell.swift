@@ -12,6 +12,7 @@ class CommentCell: UITableViewCell {
 
     //Outlet
     @IBOutlet weak var commentImage: UIImageView!
+    @IBOutlet weak var commentStar: UILabel!
     @IBOutlet weak var commentPoint: UILabel!
     @IBOutlet weak var commentText: UILabel!
     
