@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Pods.xcscheme</key>
+		<key>Pods-DatabasePersistencePattern.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -22,17 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>79FA92281519ADFD631D78C000CE5EB8</key>
+		<key>36B5F025B7DA2B6128779B97EDC667A5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8B073427FEF440585251C42C39D12DDC</key>
+		<key>AE94E5EB1EEA064C3E8F989C1F7FBC37</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>96ACFDDD73AAB5C06C6EACDAF9776BA0</key>
+		<key>B1130B0BDC28121AB57F3E9E7A43CEBA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
