@@ -1,2 +1,4 @@
 use_frameworks!
-pod 'RealmSwift'
+target 'DatabasePersistencePattern' do
+  pod 'RealmSwift'
+end
